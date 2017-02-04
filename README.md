@@ -19,6 +19,7 @@ You just have to use TestNG and use maven failsafe-pluggin.
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
                 <version>LATEST</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>pt.drsoares.pluggins</groupId>
@@ -44,8 +45,7 @@ You just have to use TestNG and use maven failsafe-pluggin.
                         </execution>
                     </executions>
                     <configuration>
-                        <skip>false</skip>
-                        <testSourceDirectory>src/test/java/pt/diogosoares/pluggins/integrationtests/</testSourceDirectory>
+                        <testSourceDirectory>src/test/java/pt/drsoares/pluggins/integrationtests/</testSourceDirectory>
                         <properties>
                             <property>
                                 <name>listener</name>
@@ -64,7 +64,7 @@ You just have to use TestNG and use maven failsafe-pluggin.
         
 3. Add the `TestCase` annotation with the respective id (and testPlan id (Optional)) to your Integration Test
     
-        package pt.diogosoares.pluggins.integrationtests;
+        package pt.drsoares.pluggins.integrationtests;
         
         import org.testng.annotations.Test;
         import pt.drsoares.pluggins.targetprocess.annotations.TestCase;
