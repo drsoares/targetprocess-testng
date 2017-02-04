@@ -1,4 +1,4 @@
-package pt.drsoares.pluggins.targetprocess.domain;
+package pt.drsoares.plugins.targetprocess.domain;
 
 import com.google.gson.annotations.SerializedName;
 

@@ -1,4 +1,4 @@
-package pt.drsoares.pluggins.targetprocess.annotations;
+package pt.drsoares.plugins.targetprocess.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

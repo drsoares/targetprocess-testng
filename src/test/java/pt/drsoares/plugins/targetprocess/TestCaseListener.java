@@ -1,4 +1,4 @@
-package pt.drsoares.pluggins.targetprocess;
+package pt.drsoares.plugins.targetprocess;
 
 import feign.Feign;
 import feign.auth.BasicAuthRequestInterceptor;
@@ -6,10 +6,10 @@ import feign.gson.GsonDecoder;
 import feign.gson.GsonEncoder;
 import org.testng.ITestResult;
 import org.testng.TestListenerAdapter;
-import pt.drsoares.pluggins.targetprocess.annotations.TestCase;
-import pt.drsoares.pluggins.targetprocess.client.TargetProcess;
-import pt.drsoares.pluggins.targetprocess.domain.*;
-import pt.drsoares.pluggins.targetprocess.utils.Predicate;
+import pt.drsoares.plugins.targetprocess.annotations.TestCase;
+import pt.drsoares.plugins.targetprocess.client.TargetProcess;
+import pt.drsoares.plugins.targetprocess.utils.Predicate;
+import pt.drsoares.plugins.targetprocess.domain.*;
 
 public class TestCaseListener extends TestListenerAdapter {
 
@@ -78,7 +78,7 @@ public class TestCaseListener extends TestListenerAdapter {
         String testPlanId = targetProcessTestCase.testPlan();
 
         if (testPlanId.isEmpty()) {
-            pt.drsoares.pluggins.targetprocess.domain.TestCase testCase = targetProcess.getTestCases(testCaseId);
+            pt.drsoares.plugins.targetprocess.domain.TestCase testCase = targetProcess.getTestCases(testCaseId);
 
             for (Item testPlanItem : testCase.testPlans.items) {
                 TestPlan testPlan = new TestPlan();

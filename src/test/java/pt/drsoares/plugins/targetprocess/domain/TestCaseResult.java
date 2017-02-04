@@ -1,4 +1,4 @@
-package pt.drsoares.pluggins.targetprocess.domain;
+package pt.drsoares.plugins.targetprocess.domain;
 
 public class TestCaseResult {
 

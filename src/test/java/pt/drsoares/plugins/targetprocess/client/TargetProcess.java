@@ -1,12 +1,12 @@
-package pt.drsoares.pluggins.targetprocess.client;
+package pt.drsoares.plugins.targetprocess.client;
 
 import feign.Headers;
 import feign.Param;
 import feign.RequestLine;
-import pt.drsoares.pluggins.targetprocess.domain.TestCase;
-import pt.drsoares.pluggins.targetprocess.domain.TestCaseResult;
-import pt.drsoares.pluggins.targetprocess.domain.TestPlanRun;
-import pt.drsoares.pluggins.targetprocess.domain.TestPlanRunRequest;
+import pt.drsoares.plugins.targetprocess.domain.TestCase;
+import pt.drsoares.plugins.targetprocess.domain.TestCaseResult;
+import pt.drsoares.plugins.targetprocess.domain.TestPlanRun;
+import pt.drsoares.plugins.targetprocess.domain.TestPlanRunRequest;
 
 @Headers("Accept: application/json")
 public interface TargetProcess {
