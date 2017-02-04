@@ -13,19 +13,19 @@ import pt.drsoares.pluggins.targetprocess.utils.Predicate;
 
 public class TestCaseListener extends TestListenerAdapter {
 
-    private static TargetProcess connect() {
+    private static TargetProcess targetProcess;
+
+    static {
         String url = System.getProperty("targetProcessUrl");
         String username = System.getProperty("targetProcessUser");
         String password = System.getProperty("targetProcessPassword");
 
-        return Feign.builder()
+        targetProcess = Feign.builder()
                 .decoder(new GsonDecoder())
                 .encoder(new GsonEncoder())
                 .requestInterceptor(new BasicAuthRequestInterceptor(username, password))
                 .target(TargetProcess.class, url);
     }
-
-    private static TargetProcess targetProcess = connect();
 
     private static final Predicate<ITestResult> IS_TARGET_PROCESS_TC = new Predicate<ITestResult>() {
         public boolean test(ITestResult result) {
