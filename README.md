@@ -63,7 +63,7 @@ You just have to use TestNG and use maven failsafe-plugin.
             </plugins>
         </build>
         
-Alternatively you can use token authentication
+        Alternatively you can use token authentication
 
         <systemPropertyVariables>
             <targetProcessUrl>https://targetprocesshostname</targetProcessUrl>
