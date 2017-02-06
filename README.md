@@ -54,6 +54,7 @@ You just have to use TestNG and use maven failsafe-plugin.
                         </properties>
                         <systemPropertyVariables>
                             <targetProcessUrl>https://targetprocesshostname</targetProcessUrl>
+                            <!-- BASIC AUTHENTICATION -->
                             <targetProcessUser>username</targetProcessUser>
                             <targetProcessPassword>password</targetProcessPassword>
                         </systemPropertyVariables>
@@ -62,7 +63,15 @@ You just have to use TestNG and use maven failsafe-plugin.
             </plugins>
         </build>
         
-3. Add the `TestCase` annotation with the respective id (and testPlan id (Optional)) to your Integration Test
+Alternatively you can use token authentication
+
+        <systemPropertyVariables>
+            <targetProcessUrl>https://targetprocesshostname</targetProcessUrl>
+            <!-- TOKEN AUTHENTICATION -->
+            <targetProcessAuthToken>token</targetProcessAuthToken>
+        </systemPropertyVariables>
+        
+3. Add the `TestCase` annotation with the respective id (and testPlan id (optional)) to your Integration Test
     
         package pt.drsoares.plugins.integrationtests;
         

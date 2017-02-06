@@ -1,30 +1,36 @@
 package pt.drsoares.plugins.targetprocess;
 
-import feign.Feign;
-import feign.auth.BasicAuthRequestInterceptor;
-import feign.gson.GsonDecoder;
-import feign.gson.GsonEncoder;
 import org.testng.ITestResult;
 import org.testng.TestListenerAdapter;
 import pt.drsoares.plugins.targetprocess.annotations.TestCase;
 import pt.drsoares.plugins.targetprocess.client.TargetProcess;
-import pt.drsoares.plugins.targetprocess.utils.Predicate;
+import pt.drsoares.plugins.targetprocess.client.authentication.basic.BasicAuthenticationBuilder;
+import pt.drsoares.plugins.targetprocess.client.authentication.token.TokenAuthenticationBuilder;
 import pt.drsoares.plugins.targetprocess.domain.*;
+import pt.drsoares.plugins.targetprocess.utils.Predicate;
+
+import java.util.logging.Logger;
 
 public class TestCaseListener extends TestListenerAdapter {
+
+    private final static Logger LOG = Logger.getLogger(TestCaseListener.class.getName());
 
     private static TargetProcess targetProcess;
 
     static {
+
         String url = System.getProperty("targetProcessUrl");
         String username = System.getProperty("targetProcessUser");
         String password = System.getProperty("targetProcessPassword");
+        String token = System.getProperty("targetProcessAuthToken");
 
-        targetProcess = Feign.builder()
-                .decoder(new GsonDecoder())
-                .encoder(new GsonEncoder())
-                .requestInterceptor(new BasicAuthRequestInterceptor(username, password))
-                .target(TargetProcess.class, url);
+        if (url != null) {
+            if (username != null && password != null) {
+                targetProcess = BasicAuthenticationBuilder.build(url, username, password);
+            } else if (token != null) {
+                targetProcess = TokenAuthenticationBuilder.build(url, token);
+            }
+        }
     }
 
     private static final Predicate<ITestResult> IS_TARGET_PROCESS_TC = new Predicate<ITestResult>() {
@@ -75,22 +81,26 @@ public class TestCaseListener extends TestListenerAdapter {
 
         String testCaseId = targetProcessTestCase.id();
 
-        String testPlanId = targetProcessTestCase.testPlan();
+        if (targetProcess != null) {
 
-        if (testPlanId.isEmpty()) {
-            pt.drsoares.plugins.targetprocess.domain.TestCase testCase = targetProcess.getTestCases(testCaseId);
+            String testPlanId = targetProcessTestCase.testPlan();
 
-            for (Item testPlanItem : testCase.testPlans.items) {
+            if (testPlanId.isEmpty()) {
+                pt.drsoares.plugins.targetprocess.domain.TestCase testCase = targetProcess.getTestCases(testCaseId);
+
+                for (Item testPlanItem : testCase.testPlans.items) {
+                    TestPlan testPlan = new TestPlan();
+                    testPlan.id = testPlanItem.id;
+                    runTestPlan(result, testPlan);
+                }
+            } else {
                 TestPlan testPlan = new TestPlan();
-                testPlan.id = testPlanItem.id;
+                testPlan.id = testPlanId;
                 runTestPlan(result, testPlan);
             }
         } else {
-            TestPlan testPlan = new TestPlan();
-            testPlan.id = testPlanId;
-            runTestPlan(result, testPlan);
+            LOG.fine("Not updating TC:" + testCaseId);
         }
-
     }
 
     private void runTestPlan(Result result, TestPlan testPlan) {
