@@ -7,11 +7,15 @@ import pt.drsoares.plugins.targetprocess.client.TargetProcess;
 
 public final class TokenAuthenticationBuilder {
 
-    private TokenAuthenticationBuilder() {
+    private String url;
+    private String token;
 
+    public TokenAuthenticationBuilder(String url, String token) {
+        this.url = url;
+        this.token = token;
     }
 
-    public static TargetProcess build(String url, String token) {
+    public TargetProcess build() {
         return Feign.builder()
                 .decoder(new GsonDecoder())
                 .encoder(new GsonEncoder())

@@ -8,7 +8,17 @@ import pt.drsoares.plugins.targetprocess.client.TargetProcess;
 
 public final class BasicAuthenticationBuilder {
 
-    public static TargetProcess build(String url, String username, String password) {
+    private String url;
+    private String username;
+    private String password;
+
+    public BasicAuthenticationBuilder(String url, String username, String password) {
+        this.url = url;
+        this.username = username;
+        this.password = password;
+    }
+
+    public TargetProcess build() {
         return Feign.builder()
                 .decoder(new GsonDecoder())
                 .encoder(new GsonEncoder())

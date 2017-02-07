@@ -26,9 +26,9 @@ public class TestCaseListener extends TestListenerAdapter {
 
         if (url != null) {
             if (username != null && password != null) {
-                targetProcess = BasicAuthenticationBuilder.build(url, username, password);
+                targetProcess = new BasicAuthenticationBuilder(url, username, password).build();
             } else if (token != null) {
-                targetProcess = TokenAuthenticationBuilder.build(url, token);
+                targetProcess = new TokenAuthenticationBuilder(url, token).build();
             }
         }
     }
