@@ -5,19 +5,21 @@ import feign.auth.BasicAuthRequestInterceptor;
 import feign.gson.GsonDecoder;
 import feign.gson.GsonEncoder;
 import pt.drsoares.plugins.targetprocess.client.TargetProcess;
+import pt.drsoares.plugins.targetprocess.utils.Builder;
 
-public final class BasicAuthenticationBuilder {
+public final class BasicAuthentication implements Builder<TargetProcess> {
 
     private String url;
     private String username;
     private String password;
 
-    public BasicAuthenticationBuilder(String url, String username, String password) {
+    public BasicAuthentication(String url, String username, String password) {
         this.url = url;
         this.username = username;
         this.password = password;
     }
 
+    @Override
     public TargetProcess build() {
         return Feign.builder()
                 .decoder(new GsonDecoder())

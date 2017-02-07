@@ -4,8 +4,9 @@ import org.testng.ITestResult;
 import org.testng.TestListenerAdapter;
 import pt.drsoares.plugins.targetprocess.annotations.TestCase;
 import pt.drsoares.plugins.targetprocess.client.TargetProcess;
-import pt.drsoares.plugins.targetprocess.client.authentication.basic.BasicAuthenticationBuilder;
-import pt.drsoares.plugins.targetprocess.client.authentication.token.TokenAuthenticationBuilder;
+import pt.drsoares.plugins.targetprocess.utils.Builder;
+import pt.drsoares.plugins.targetprocess.client.authentication.basic.BasicAuthentication;
+import pt.drsoares.plugins.targetprocess.client.authentication.token.TokenAuthentication;
 import pt.drsoares.plugins.targetprocess.domain.*;
 import pt.drsoares.plugins.targetprocess.utils.Predicate;
 
@@ -22,9 +23,11 @@ public class TestCaseListener extends TestListenerAdapter {
 
         if (url != null) {
             if (username != null && password != null) {
-                targetProcess = new BasicAuthenticationBuilder(url, username, password).build();
+                Builder<TargetProcess> builder = new BasicAuthentication(url, username, password);
+                targetProcess = builder.build();
             } else if (token != null) {
-                targetProcess = new TokenAuthenticationBuilder(url, token).build();
+                Builder<TargetProcess> builder = new TokenAuthentication(url, token);
+                targetProcess = builder.build();
             }
         }
     }
