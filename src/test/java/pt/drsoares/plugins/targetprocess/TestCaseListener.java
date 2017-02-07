@@ -43,7 +43,7 @@ public class TestCaseListener extends TestListenerAdapter {
 
     private static final Predicate<TargetProcess> NOT_TO_SKIP = new Predicate<TargetProcess>() {
         public boolean test(TargetProcess value) {
-            return targetProcess != null;
+            return value != null;
         }
     };
 
