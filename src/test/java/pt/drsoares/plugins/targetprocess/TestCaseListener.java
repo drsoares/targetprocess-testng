@@ -9,11 +9,7 @@ import pt.drsoares.plugins.targetprocess.client.authentication.token.TokenAuthen
 import pt.drsoares.plugins.targetprocess.domain.*;
 import pt.drsoares.plugins.targetprocess.utils.Predicate;
 
-import java.util.logging.Logger;
-
 public class TestCaseListener extends TestListenerAdapter {
-
-    private final static Logger LOG = Logger.getLogger(TestCaseListener.class.getName());
 
     private static TargetProcess targetProcess;
 
@@ -67,7 +63,7 @@ public class TestCaseListener extends TestListenerAdapter {
     }
 
     private synchronized void updateTestCaseInTargetProcess(ITestResult tr, Result result) {
-        if (IS_TARGET_PROCESS_TC.test(tr)) {
+        if (targetProcess != null && IS_TARGET_PROCESS_TC.test(tr)) {
             handle(tr, result);
         }
     }
@@ -81,26 +77,22 @@ public class TestCaseListener extends TestListenerAdapter {
 
         String testCaseId = targetProcessTestCase.id();
 
-        if (targetProcess != null) {
+        String testPlanId = targetProcessTestCase.testPlan();
 
-            String testPlanId = targetProcessTestCase.testPlan();
+        if (testPlanId.isEmpty()) {
+            pt.drsoares.plugins.targetprocess.domain.TestCase testCase = targetProcess.getTestCases(testCaseId);
 
-            if (testPlanId.isEmpty()) {
-                pt.drsoares.plugins.targetprocess.domain.TestCase testCase = targetProcess.getTestCases(testCaseId);
-
-                for (Item testPlanItem : testCase.testPlans.items) {
-                    TestPlan testPlan = new TestPlan();
-                    testPlan.id = testPlanItem.id;
-                    runTestPlan(result, testPlan);
-                }
-            } else {
+            for (Item testPlanItem : testCase.testPlans.items) {
                 TestPlan testPlan = new TestPlan();
-                testPlan.id = testPlanId;
+                testPlan.id = testPlanItem.id;
                 runTestPlan(result, testPlan);
             }
         } else {
-            LOG.fine("Not updating TC:" + testCaseId);
+            TestPlan testPlan = new TestPlan();
+            testPlan.id = testPlanId;
+            runTestPlan(result, testPlan);
         }
+
     }
 
     private void runTestPlan(Result result, TestPlan testPlan) {
