@@ -41,6 +41,13 @@ public class TestCaseListener extends TestListenerAdapter {
         }
     };
 
+    private static final Predicate<TargetProcess> NOT_TO_SKIP = new Predicate<TargetProcess>() {
+        public boolean test(TargetProcess value) {
+            return targetProcess != null;
+        }
+    };
+
+
     @Override
     public void onTestSuccess(ITestResult tr) {
         super.onTestSuccess(tr);
@@ -66,7 +73,7 @@ public class TestCaseListener extends TestListenerAdapter {
     }
 
     private synchronized void updateTestCaseInTargetProcess(ITestResult tr, Result result) {
-        if (targetProcess != null && IS_TARGET_PROCESS_TC.test(tr)) {
+        if (NOT_TO_SKIP.test(targetProcess) && IS_TARGET_PROCESS_TC.test(tr)) {
             handle(tr, result);
         }
     }
