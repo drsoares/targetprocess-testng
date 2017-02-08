@@ -13,6 +13,7 @@ import pt.drsoares.plugins.targetprocess.utils.Predicate;
 public class TestCaseListener extends TestListenerAdapter {
 
     private static TargetProcess targetProcess;
+    private static boolean skipMode = false;
 
     static {
 
@@ -28,7 +29,11 @@ public class TestCaseListener extends TestListenerAdapter {
             } else if (token != null) {
                 Builder<TargetProcess> builder = new TokenAuthentication(url, token);
                 targetProcess = builder.build();
+            } else {
+                skipMode = true;
             }
+        } else {
+            skipMode = true;
         }
     }
 
@@ -41,9 +46,9 @@ public class TestCaseListener extends TestListenerAdapter {
         }
     };
 
-    private static final Predicate<ITestResult> NOT_TO_SKIP = new Predicate<ITestResult>() {
+    private static final Predicate<ITestResult> IS_TC_APPLIABLE = new Predicate<ITestResult>() {
         public boolean test(ITestResult value) {
-            return targetProcess != null && IS_TARGET_PROCESS_TC.test(value);
+            return !skipMode && IS_TARGET_PROCESS_TC.test(value);
         }
     };
 
@@ -73,7 +78,7 @@ public class TestCaseListener extends TestListenerAdapter {
     }
 
     private synchronized void updateTestCaseInTargetProcess(ITestResult tr, Result result) {
-        if (NOT_TO_SKIP.test(tr)) {
+        if (IS_TC_APPLIABLE.test(tr)) {
             handle(tr, result);
         }
     }
