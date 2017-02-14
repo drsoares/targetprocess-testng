@@ -107,10 +107,9 @@ public class TestCaseListener extends TestListenerAdapter {
             testPlan.id = testPlanId;
             runTestPlan(result, testPlan);
         }
-
     }
 
-    private void runTestPlan(Result result, TestPlan testPlan) {
+    private static void runTestPlan(Result result, TestPlan testPlan) {
         TestPlanRunRequest testPlanRunRequest = new TestPlanRunRequest();
         testPlanRunRequest.testPlan = testPlan;
         TestPlanRun testPlanRun = targetProcess.createTestPlanRun(testPlanRunRequest);

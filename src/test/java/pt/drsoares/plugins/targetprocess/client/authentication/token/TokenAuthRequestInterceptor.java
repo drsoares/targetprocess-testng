@@ -13,6 +13,6 @@ public class TokenAuthRequestInterceptor implements RequestInterceptor {
 
     @Override
     public void apply(RequestTemplate template) {
-        template.query("token", token);
+        template.query("access_token", token);
     }
 }
