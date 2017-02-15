@@ -103,7 +103,11 @@ public class TestSuiteListener implements ISuiteListener {
             }
         }
 
-        targetProcess.testCaseRun(TPR_PER_TC.get(testCaseId), result);
+        String testCaseRunId = TPR_PER_TC.get(testCaseId);
+
+        if (testCaseRunId != null) {
+            targetProcess.testCaseRun(testCaseRunId, result);
+        }
     }
 
     private static void createTestPlanRun(TestPlan testPlan) {
