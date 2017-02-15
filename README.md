@@ -49,7 +49,7 @@ You just have to use TestNG and use maven failsafe-plugin.
                         <properties>
                             <property>
                                 <name>listener</name>
-                                <value>pt.drsoares.plugins.targetprocess.TestCaseListener</value>
+                                <value>pt.drsoares.plugins.targetprocess.TestSuiteListener</value>
                             </property>
                         </properties>
                         <systemPropertyVariables>

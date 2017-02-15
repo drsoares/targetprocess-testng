@@ -1,19 +1,19 @@
-package pt.drsoares.plugins.targetprocess.client.authentication.token;
+package pt.drsoares.plugins.targetprocess.client;
 
 import feign.Feign;
+import feign.RequestInterceptor;
 import feign.gson.GsonDecoder;
 import feign.gson.GsonEncoder;
-import pt.drsoares.plugins.targetprocess.client.TargetProcess;
 import pt.drsoares.plugins.targetprocess.utils.Builder;
 
-public final class TokenAuthentication implements Builder<TargetProcess> {
+public class TargetProcessBuilder implements Builder<TargetProcess> {
 
     private String url;
-    private String token;
+    private RequestInterceptor requestInterceptor;
 
-    public TokenAuthentication(String url, String token) {
+    public TargetProcessBuilder(String url, RequestInterceptor requestInterceptor) {
         this.url = url;
-        this.token = token;
+        this.requestInterceptor = requestInterceptor;
     }
 
     @Override
@@ -21,7 +21,7 @@ public final class TokenAuthentication implements Builder<TargetProcess> {
         return Feign.builder()
                 .decoder(new GsonDecoder())
                 .encoder(new GsonEncoder())
-                .requestInterceptor(new TokenAuthRequestInterceptor(token))
+                .requestInterceptor(requestInterceptor)
                 .target(TargetProcess.class, url);
     }
 }

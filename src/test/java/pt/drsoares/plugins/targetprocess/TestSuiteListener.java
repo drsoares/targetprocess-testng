@@ -1,13 +1,14 @@
 package pt.drsoares.plugins.targetprocess;
 
+import feign.auth.BasicAuthRequestInterceptor;
 import org.testng.IInvokedMethod;
 import org.testng.ISuite;
 import org.testng.ISuiteListener;
 import org.testng.ITestResult;
 import pt.drsoares.plugins.targetprocess.annotations.TestCase;
 import pt.drsoares.plugins.targetprocess.client.TargetProcess;
-import pt.drsoares.plugins.targetprocess.client.authentication.basic.BasicAuthentication;
-import pt.drsoares.plugins.targetprocess.client.authentication.token.TokenAuthentication;
+import pt.drsoares.plugins.targetprocess.client.TargetProcessBuilder;
+import pt.drsoares.plugins.targetprocess.client.authentication.token.TokenAuthRequestInterceptor;
 import pt.drsoares.plugins.targetprocess.domain.*;
 import pt.drsoares.plugins.targetprocess.utils.Builder;
 import pt.drsoares.plugins.targetprocess.utils.Predicate;
@@ -29,16 +30,18 @@ public class TestSuiteListener implements ISuiteListener {
         String password = System.getProperty("targetProcessPassword");
         String token = System.getProperty("targetProcessAuthToken");
 
+        Builder<TargetProcess> builder = null;
+
         if (url != null) {
             if (username != null && password != null) {
-                Builder<TargetProcess> builder = new BasicAuthentication(url, username, password);
-                targetProcess = builder.build();
+                builder = new TargetProcessBuilder(url, new BasicAuthRequestInterceptor(username, password));
             } else if (token != null) {
-                Builder<TargetProcess> builder = new TokenAuthentication(url, token);
-                targetProcess = builder.build();
-            } else {
-                skipMode = true;
+                builder = new TargetProcessBuilder(url, new TokenAuthRequestInterceptor(token));
             }
+        }
+
+        if (builder != null) {
+            targetProcess = builder.build();
         } else {
             skipMode = true;
         }
