@@ -1,16 +1,23 @@
 package pt.drsoares.plugins.targetprocess;
 
+import org.testng.IInvokedMethod;
+import org.testng.ISuite;
+import org.testng.ISuiteListener;
 import org.testng.ITestResult;
-import org.testng.TestListenerAdapter;
 import pt.drsoares.plugins.targetprocess.annotations.TestCase;
 import pt.drsoares.plugins.targetprocess.client.TargetProcess;
-import pt.drsoares.plugins.targetprocess.utils.Builder;
 import pt.drsoares.plugins.targetprocess.client.authentication.basic.BasicAuthentication;
 import pt.drsoares.plugins.targetprocess.client.authentication.token.TokenAuthentication;
 import pt.drsoares.plugins.targetprocess.domain.*;
+import pt.drsoares.plugins.targetprocess.utils.Builder;
 import pt.drsoares.plugins.targetprocess.utils.Predicate;
 
-public class TestCaseListener extends TestListenerAdapter {
+import java.util.HashMap;
+import java.util.Map;
+
+public class TestSuiteListener implements ISuiteListener {
+
+    private static final Map<String, String> TPR_PER_TC = new HashMap<>();
 
     private static TargetProcess targetProcess;
     private static boolean skipMode = false;
@@ -46,75 +53,63 @@ public class TestCaseListener extends TestListenerAdapter {
         }
     };
 
-    private static final Predicate<ITestResult> IS_TC_APPLIABLE = new Predicate<ITestResult>() {
-        public boolean test(ITestResult value) {
-            return !skipMode && IS_TARGET_PROCESS_TC.test(value);
-        }
-    };
+    public void onStart(ISuite suite) {
 
-
-    @Override
-    public void onTestSuccess(ITestResult tr) {
-        super.onTestSuccess(tr);
-        updateTestCaseInTargetProcess(tr, Result.SUCCESS);
     }
 
-    @Override
-    public void onTestFailure(ITestResult tr) {
-        super.onTestFailure(tr);
-        updateTestCaseInTargetProcess(tr, Result.FAILURE);
-    }
-
-    @Override
-    public void onTestSkipped(ITestResult tr) {
-        super.onTestSkipped(tr);
-        updateTestCaseInTargetProcess(tr, Result.SKIPPED);
-    }
-
-    @Override
-    public void onTestFailedButWithinSuccessPercentage(ITestResult tr) {
-        super.onTestFailedButWithinSuccessPercentage(tr);
-        updateTestCaseInTargetProcess(tr, Result.FAILED_BUT_WITHIN_SUCCESS_PERCENTAGE);
-    }
-
-    private synchronized void updateTestCaseInTargetProcess(ITestResult tr, Result result) {
-        if (IS_TC_APPLIABLE.test(tr)) {
-            handle(tr, result);
+    public void onFinish(ISuite suite) {
+        if (!skipMode) {
+            for (IInvokedMethod testNGMethod : suite.getAllInvokedMethods()) {
+                updateTestCaseInTargetProcess(testNGMethod.getTestResult());
+            }
         }
     }
 
-    private void handle(ITestResult tr, Result result) {
+    private void updateTestCaseInTargetProcess(ITestResult tr) {
+        if (IS_TARGET_PROCESS_TC.test(tr)) {
+            handle(tr);
+        }
+    }
 
-        TestCase targetProcessTestCase = tr.getMethod()
+    private void handle(ITestResult testResult) {
+
+        TestCase targetProcessTestCase = testResult.getMethod()
                 .getConstructorOrMethod()
                 .getMethod()
                 .getAnnotation(TestCase.class);
+
+        TestCaseResult result = Result.getTestCaseResult(testResult.getStatus());
 
         String testCaseId = targetProcessTestCase.id();
 
         String testPlanId = targetProcessTestCase.testPlan();
 
-        if (testPlanId.isEmpty()) {
-            pt.drsoares.plugins.targetprocess.domain.TestCase testCase = targetProcess.getTestCases(testCaseId);
+        if (TPR_PER_TC.isEmpty()) {
+            if (testPlanId.isEmpty()) {
+                pt.drsoares.plugins.targetprocess.domain.TestCase testCase = targetProcess.getTestCases(testCaseId);
 
-            for (Item testPlanItem : testCase.testPlans.items) {
+                for (Item testPlanItem : testCase.testPlans.items) {
+                    TestPlan testPlan = new TestPlan();
+                    testPlan.id = testPlanItem.id;
+                    createTestPlanRun(testPlan);
+                }
+            } else {
                 TestPlan testPlan = new TestPlan();
-                testPlan.id = testPlanItem.id;
-                runTestPlan(result, testPlan);
+                testPlan.id = testPlanId;
+                createTestPlanRun(testPlan);
             }
-        } else {
-            TestPlan testPlan = new TestPlan();
-            testPlan.id = testPlanId;
-            runTestPlan(result, testPlan);
         }
+
+        targetProcess.testCaseRun(TPR_PER_TC.get(testCaseId), result);
     }
 
-    private static void runTestPlan(Result result, TestPlan testPlan) {
+    private static void createTestPlanRun(TestPlan testPlan) {
         TestPlanRunRequest testPlanRunRequest = new TestPlanRunRequest();
         testPlanRunRequest.testPlan = testPlan;
         TestPlanRun testPlanRun = targetProcess.createTestPlanRun(testPlanRunRequest);
-        for (Item testCaseRunItem : testPlanRun.testCaseRuns.items) {
-            targetProcess.testCaseRun(testCaseRunItem.id, result.getTestCaseResult());
+
+        for (TestCaseItem item : testPlanRun.testCaseRuns.items) {
+            TPR_PER_TC.put(item.testCase.id, item.id);
         }
     }
 }

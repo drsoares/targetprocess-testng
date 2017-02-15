@@ -11,15 +11,15 @@ import pt.drsoares.plugins.targetprocess.domain.TestPlanRunRequest;
 @Headers("Accept: application/json")
 public interface TargetProcess {
 
-    @RequestLine("GET /api/v1/TestCases/{testcaseid}?include=[TestPlans[ID]]")
-    TestCase getTestCases(@Param("testcaseid") String testCaseid);
+    @RequestLine("GET /api/v1/TestCases/{testCaseId}?include=[TestPlans[Id]]")
+    TestCase getTestCases(@Param("testCaseId") String testCaseId);
 
     @Headers("Content-Type: application/json")
-    @RequestLine("POST /api/v1/TestPlanRuns?resultFormat=json&resultInclude=[Id,TestCaseRuns[Id]]")
+    @RequestLine("POST /api/v1/TestPlanRuns?resultInclude=[Id,TestCaseRuns[Id,TestCase[Id]]]")
     TestPlanRun createTestPlanRun(TestPlanRunRequest testPlanReq);
 
     @Headers("Content-Type: application/json")
-    @RequestLine("POST /api/v1/TestCaseRuns/{testcaseid}")
-    void testCaseRun(@Param("testcaseid") String testCaseId, TestCaseResult testCaseRun);
+    @RequestLine("POST /api/v1/TestCaseRuns/{testCaseRunId}")
+    void testCaseRun(@Param("testCaseRunId") String testCaseRunId, TestCaseResult testCaseRun);
 
 }
