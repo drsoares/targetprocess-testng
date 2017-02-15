@@ -18,7 +18,7 @@ import java.util.Map;
 
 public class TestSuiteListener implements ISuiteListener {
 
-    private static final Map<String, String> TPR_PER_TC = new HashMap<>();
+    private static final Map<String, String> TEST_CASE_RUN_PER_TEST_CASE = new HashMap<>();
 
     private static TargetProcess targetProcess;
     private static boolean skipMode = false;
@@ -87,26 +87,30 @@ public class TestSuiteListener implements ISuiteListener {
 
         String testPlanId = targetProcessTestCase.testPlan();
 
-        if (TPR_PER_TC.isEmpty()) {
-            if (testPlanId.isEmpty()) {
-                pt.drsoares.plugins.targetprocess.domain.TestCase testCase = targetProcess.getTestCases(testCaseId);
-
-                for (Item testPlanItem : testCase.testPlans.items) {
-                    TestPlan testPlan = new TestPlan();
-                    testPlan.id = testPlanItem.id;
-                    createTestPlanRun(testPlan);
-                }
-            } else {
-                TestPlan testPlan = new TestPlan();
-                testPlan.id = testPlanId;
-                createTestPlanRun(testPlan);
-            }
+        if (TEST_CASE_RUN_PER_TEST_CASE.isEmpty()) {
+            populateTestCaseRunPerTestCase(testCaseId, testPlanId);
         }
 
-        String testCaseRunId = TPR_PER_TC.get(testCaseId);
+        String testCaseRunId = TEST_CASE_RUN_PER_TEST_CASE.get(testCaseId);
 
         if (testCaseRunId != null) {
             targetProcess.testCaseRun(testCaseRunId, result);
+        }
+    }
+
+    private void populateTestCaseRunPerTestCase(String testCaseId, String testPlanId) {
+        if (testPlanId.isEmpty()) {
+            pt.drsoares.plugins.targetprocess.domain.TestCase testCase = targetProcess.getTestCases(testCaseId);
+
+            for (Item testPlanItem : testCase.testPlans.items) {
+                TestPlan testPlan = new TestPlan();
+                testPlan.id = testPlanItem.id;
+                createTestPlanRun(testPlan);
+            }
+        } else {
+            TestPlan testPlan = new TestPlan();
+            testPlan.id = testPlanId;
+            createTestPlanRun(testPlan);
         }
     }
 
@@ -116,7 +120,7 @@ public class TestSuiteListener implements ISuiteListener {
         TestPlanRun testPlanRun = targetProcess.createTestPlanRun(testPlanRunRequest);
 
         for (TestCaseItem item : testPlanRun.testCaseRuns.items) {
-            TPR_PER_TC.put(item.testCase.id, item.id);
+            TEST_CASE_RUN_PER_TEST_CASE.put(item.testCase.id, item.id);
         }
     }
 }
