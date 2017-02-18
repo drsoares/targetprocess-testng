@@ -114,7 +114,7 @@ public class TestSuiteListener implements ISuiteListener {
         }
     }
 
-    private static void createTestPlanRun(TestPlan testPlan) {
+    private void createTestPlanRun(TestPlan testPlan) {
         TestPlanRunRequest testPlanRunRequest = new TestPlanRunRequest();
         testPlanRunRequest.testPlan = testPlan;
         TestPlanRun testPlanRun = targetProcess.createTestPlanRun(testPlanRunRequest);
