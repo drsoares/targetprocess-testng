@@ -7,9 +7,9 @@ public enum Result {
 
     SUCCESS(1, new TestCaseResult("Passed", "Test Passed")),
 
-    SKIPPED(2, new TestCaseResult("NotRun", "Test Skipped")),
+    FAILURE(2, new TestCaseResult("Failed", "Test Failed")),
 
-    FAILURE(3, new TestCaseResult("Failed", "Test Failed")),
+    SKIPPED(3, new TestCaseResult("NotRun", "Test Skipped")),
 
     FAILED_BUT_WITHIN_SUCCESS_PERCENTAGE(4, new TestCaseResult("Failed", "Test Failed, but it was within success percentage"));
 

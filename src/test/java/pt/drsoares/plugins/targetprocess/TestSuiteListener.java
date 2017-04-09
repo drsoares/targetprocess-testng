@@ -16,6 +16,13 @@ import pt.drsoares.plugins.targetprocess.utils.Predicate;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * TestSuiteListener is a TestNG Suite Listener, once the Integration Tests finish,
+ * it will look for the annotated tests ( with pt.dr.soares.plugins.targetprocess.TestCase annotation) and
+ * create a Target Process Test Case Run for them on a Target Process instance.
+ *
+ * @author Diogo Soares
+ */
 public class TestSuiteListener implements ISuiteListener {
 
     private static final Map<String, String> TEST_CASE_RUN_PER_TEST_CASE = new HashMap<>();
